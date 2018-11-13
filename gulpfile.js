@@ -1,19 +1,27 @@
 var gulp = require('gulp');
-var uglify = require('gulp-uglify');
+var uglify = require('gulp-uglify-es').default;
 var livereload = require('gulp-livereload');
 var concat = require('gulp-concat');
-var autoprefixer =  require('autoprefixer');
+var autoprefixer = require('autoprefixer');
 var plumber = require('gulp-plumber');
 var sourceMaps = require('gulp-sourcemaps');
 var sass = require('gulp-sass');
 var del = require('del');
 var postcss = require('gulp-postcss');
+var addsrc = require('gulp-add-src');
+
 
 // File paths
 var destPath = 'web';
-var scriptsPath = 'src/scripts/**/*.js';
+var scriptsArray = [
+  'node_modules/jquery/dist/jquery.js',
+  'node_modules/popper.js/dist/popper.js',
+  'node_modules/bootstrap/dist/js/bootstrap.js',
+  'src/scripts/**/*.js',
+];
 var scssPath = 'src/scss/**/*.scss';
 var imagesPath = 'src/images/**/*.{png,jpeg,jpg,svg,gif}';
+var nodePath = 'node_modules';
 
 // Image compression
 var imagemin = require('gulp-imagemin');
@@ -29,6 +37,7 @@ gulp.task('sass', function () {
       console.log(err);
       this.emit('end');
     }))
+    .pipe(addsrc.prepend('node_modules/bootstrap/dist/css/bootstrap.css'))
     .pipe(sourceMaps.init())
     .pipe(sass({
       outputStyle: 'compressed'
@@ -42,7 +51,7 @@ gulp.task('sass', function () {
 // Scripts
 gulp.task('scripts', function () {
   console.log('Starting scripts task.');
-  return gulp.src(scriptsPath)
+  return gulp.src(scriptsArray)
     .pipe(plumber(function (err) {
       console.log('Scripts task error');
       console.log(err);
@@ -75,7 +84,7 @@ gulp.task('watch', ['default'], function () {
   console.log('Starting watch task.');
   require('./server.js');
   livereload.listen();
-  gulp.watch(scriptsPath, ['scripts']);
+  gulp.watch(scriptsArray, ['scripts']);
   gulp.watch(scssPath, ['sass']);
 });
 
