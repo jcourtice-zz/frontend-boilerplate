@@ -9,6 +9,7 @@ var sass = require('gulp-sass');
 var del = require('del');
 var postcss = require('gulp-postcss');
 var addsrc = require('gulp-add-src');
+var eslint = require('gulp-eslint');
 
 
 // File paths
@@ -65,6 +66,15 @@ gulp.task('scripts', function () {
     .pipe(livereload());
 });
 
+// Script Linter
+gulp.task('jslint', function () {
+  console.log('Starting jslint task.');
+  return gulp.src('src/scripts/**/*.js')
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
+});
+
 // Images
 gulp.task('images', function () {
   return gulp.src(imagesPath)
@@ -96,6 +106,6 @@ gulp.task('clean', function () {
 });
 
 // Default
-gulp.task('default', ['clean', 'images', 'sass', 'scripts'], function () {
+gulp.task('default', ['clean', 'images', 'sass', 'scripts', 'jslint'], function () {
   console.log('Starting default task.');
 });

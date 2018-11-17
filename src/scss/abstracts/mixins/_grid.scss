@@ -1,0 +1,59 @@
+@charset 'UTF-8';
+
+// === Grid Row === //
+
+$default-width: px-to-rem(1440);
+$default-colspan: 1;
+$default-total-cols: 16;
+$default-gutter: 1.58;
+
+// @include grid-row();
+// Place on parent of the column items
+@mixin grid-row($alignment: start, $width: $default-width) {
+  @include flex;
+  @include flex-x(flex-wrap, wrap);
+
+  @if $alignment == start or $alignment == flex-start or $alignment == top  {
+    @include flex-x(align-items, flex-start);
+  } @else if $alignment == center or $alignment == middle {
+    @include flex-x(align-items, center);
+  } @else if $alignment == end or $alignment == flex-end or $alignment == bottom {
+    @include flex-x(align-items, flex-end);
+  } @else if $alignment == none or $alignment == unset or $alignment == auto {
+    @include flex-x(align-items, unset);
+  }
+
+
+  width: 100%;
+  max-width: $width;
+  margin: 0 auto;
+}
+
+// @include grid-item();
+// Place on column items
+@mixin grid-item($colspan: $default-colspan, $total-cols: $default-total-cols, $gutter: $default-gutter) {
+  $total-gutter: ($total-cols - 1) * $gutter;
+  $spanned-gutters: ($colspan - 1) * $gutter;
+  width: ($colspan * ((100-$total-gutter)/$total-cols)) + $spanned-gutters + 0%;
+  margin-right: $gutter + 0%;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+@mixin colspan($colspan: $default-colspan, $total-cols: $default-total-cols, $gutter: $default-gutter) {
+  $total-gutter: ($total-cols - 1) * $gutter;
+  $spanned-gutters: ($colspan - 1) * $gutter;
+  width: ($colspan * ((100-$total-gutter)/$total-cols)) + $spanned-gutters + 0%;
+}
+
+@function col-width($colspan: $default-colspan, $add-gutter: false) {
+  $total-gutter: ($default-total-cols - 1) * $default-gutter;
+  $spanned-gutters: ($colspan - 1) * $default-gutter;
+  @if $add-gutter == true {
+    @return ($colspan * ((100-$total-gutter)/$default-total-cols)) + $default-gutter + $spanned-gutters + 0%;
+  } @else if $add-gutter == false {
+    @return ($colspan * ((100-$total-gutter)/$default-total-cols)) + $spanned-gutters + 0%;
+  }
+}
